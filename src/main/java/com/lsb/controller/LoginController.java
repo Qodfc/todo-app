@@ -1,4 +1,4 @@
-package com.lsb;
+package com.lsb.controller;
 
 import java.io.IOException;
 
@@ -10,22 +10,24 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-public class PrimaryController {
+import com.lsb.App;
+
+public class LoginController {
+
     @FXML
     Label stateLabel;
-
+    
     @FXML
-    private void switchToSecondary() throws IOException {
-
-        App.setRoot("secondary");
-    }
+    Button loginButton;
 
     @FXML
     private void changeStateToLoggedIn(ActionEvent e) throws IOException {
-        Scene scene = new Scene(loadFXML("secondary"));
+        Scene scene = new Scene(loadFXML("main"));
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
+        Stage currentStage = (Stage) loginButton.getScene().getWindow();
+        currentStage.close();
         //stateLabel.setText("Pressed");
     }
 
