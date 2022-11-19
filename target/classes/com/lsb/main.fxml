@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox alignment="CENTER" prefHeight="482.0" prefWidth="678.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lsb.controller.MainController">
+<VBox minHeight="400" minWidth="600" alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lsb.controller.MainController">
    <children>
       <MenuBar>
         <menus>
@@ -30,11 +30,11 @@
           </Menu>
         </menus>
       </MenuBar>
-      <SplitPane dividerPositions="0.1997635933806146" prefHeight="518.0" prefWidth="678.0">
+      <SplitPane dividerPositions="0.2">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minHeight="0.0">
                <children>
-                  <VBox prefHeight="455.0" prefWidth="132.0">
+                  <VBox>
                      <children>
                         <Button fx:id="btn" mnemonicParsing="false" text="Button" />
                         <Button mnemonicParsing="false" text="Button" />
@@ -43,9 +43,9 @@
                   </VBox>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="550.0">
+          <AnchorPane minHeight="400" minWidth="600">
                <children>
-                  <WebView fx:id="webView" prefHeight="455.0" prefWidth="539.0" />
+                  <WebView fx:id="webView"/>
                </children>
             </AnchorPane>
         </items>

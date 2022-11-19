@@ -2,16 +2,17 @@ package com.lsb.controller;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.HTMLEditor;
-import javafx.stage.Stage;
-
-import com.lsb.App;
+import javafx.scene.web.WebView;
 
 public class EditorController {
 
@@ -22,12 +23,15 @@ public class EditorController {
     Button submitButton;
 
     @FXML
-    private void save(ActionEvent e) throws IOException {
+    private void initialize() {
+    }
+
+    @FXML
+    private void save(ActionEvent e) {
         System.out.println(htmlEditor.getHtmlText());
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
+    public void setArticle (String html) {
+        htmlEditor.setHtmlText(html);
     }
 }
