@@ -40,21 +40,39 @@ public class MainController{
                 jsBridge = new JSBridge();
                 
                 for (int i = 0; i < 30; i++) {
-                    String el = "<h2>Hi, " + i + "</h2>";
+                    String title = "" + i;
+                    String article = "<p>Hi, " + i + "</p>";
                     String id = String.format("content-%s", i);
-                    String cl = "content-item";
+
                     Element content = document.createElement("div");
                     content.setAttribute("id", id);
-                    content.setAttribute("class", cl);
+                    content.setAttribute("class", "content-item");
+
+                    Element contentTitle = document.createElement("div");
+                    contentTitle.setAttribute("id", id + "-title");
+                    contentTitle.setAttribute("class", "content-item-title");
+
+                    Element contentArticle = document.createElement("div");
+                    contentArticle.setAttribute("id", id + "-article");
+                    contentArticle.setAttribute("class", "content-item-article");
+
+                    Element hr = document.createElement("hr");
+                    
+                    content.appendChild(contentTitle);
+                    content.appendChild(hr);
+                    content.appendChild(contentArticle);
 
                     board.appendChild(content);
                     
                     engine.executeScript(
-                        "document.getElementById('" + id + "')"
-                        + ".innerHTML = '" + el + "';"
+                        "document.getElementById('" + id + "-title')"
+                        + ".innerHTML = '" + title + "';"
+                        +
+                        "document.getElementById('" + id + "-article')"
+                        + ".innerHTML = '" + article + "';"
                     );
 
-                    content.setAttribute("onclick", "app.click(this.innerHTML)");
+                    content.setAttribute("onclick", "app.click(this.querySelector('.content-item-title').innerText, this.querySelector('.content-item-article').innerHTML)");
                 }
 
                 System.out.println("Ready");
@@ -72,19 +90,26 @@ public class MainController{
     }
 
     public class JSBridge {
-        public void click(String html) throws IOException {
-            System.out.println(html);
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/lsb/editor.fxml"));     
+        public void click(String title, String article) throws IOException {
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/lsb/editor.fxml"));     
 
-            Parent root = (Parent)fxmlLoader.load();          
-            EditorController controller = fxmlLoader.<EditorController>getController();
-            controller.setArticle(html);
+                Parent root = (Parent)fxmlLoader.load();          
+                EditorController controller = fxmlLoader.<EditorController>getController();
+                
+                controller.setTitle(title);
+                controller.setArticle(article);
 
-            Scene scene = new Scene(root); 
-            Stage stage = new Stage();
+                Scene scene = new Scene(root); 
+                Stage stage = new Stage();
 
-            stage.setScene(scene);    
-            stage.show();   
+                stage.setScene(scene);    
+                stage.show();  
+            }
+            catch (Exception e) {
+                System.err.println(e);
+            }
+             
         }
     }
 }
