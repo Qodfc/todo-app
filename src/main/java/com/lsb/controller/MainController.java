@@ -2,6 +2,7 @@ package com.lsb.controller;
 
 import java.io.IOException;
 
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -15,7 +16,8 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
 
-import com.lsb.util.Loader;
+import com.lsb.api.Auth;
+import com.lsb.api.Memo;
 
 public class MainController{
     @FXML
@@ -30,6 +32,9 @@ public class MainController{
     public void initialize() {
         final WebEngine engine = webView.getEngine();
 
+        System.out.println(Auth.getAuthToken());
+        Memo.Refresh();
+
         engine.setJavaScriptEnabled(true);
         engine.setUserStyleSheetLocation(getClass().getResource("/com/lsb/mainView.css").toString());
         engine.documentProperty().addListener((v, o, n) -> {
@@ -39,10 +44,12 @@ public class MainController{
 
                 jsBridge = new JSBridge();
                 
-                for (int i = 0; i < 30; i++) {
-                    String title = "" + i;
-                    String article = "<p>Hi, " + i + "</p>";
-                    String id = String.format("content-%s", i);
+                for (Object obj : Memo.Get()) {
+                    JSONObject body = (JSONObject) obj;
+
+                    String title = body.getString("title");
+                    String article = body.getString("article");
+                    String id = body.getString("_id");
 
                     Element content = document.createElement("div");
                     content.setAttribute("id", id);

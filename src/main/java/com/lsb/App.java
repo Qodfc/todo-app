@@ -18,7 +18,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Font.loadFont(getClass().getResourceAsStream("/com/lsb/font.otf"), 10);
-        scene = new Scene(loadFXML("main"));
+        scene = new Scene(loadFXML("login"));
         stage.setScene(scene);
         stage.show();
     }

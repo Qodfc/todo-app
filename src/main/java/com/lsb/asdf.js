@@ -1,1 +1,0 @@
-document.getElementById('d').appendChild(document.createElement('div').innerHTML("<p style=\"text-align: center;\"><span style=\"font-family: &quot;&quot;;\">asdf<span style=\"font-weight: bold;\">sadfasdfs</span></span></p><p style=\"text-align: center;\"><span style=\"font-family: &quot;&quot;;\">as<span style=\"font-weight: bold;\">dfasfdasdfsaf</span></span></p>\""))
