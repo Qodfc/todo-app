@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 
 import com.lsb.api.Auth;
@@ -29,8 +30,8 @@ public class LoginController {
 
     @FXML
     private void Login(ActionEvent e) throws IOException {
-        String id = idInput.getText();
-        String password = passwordInput.getText();
+        final String id = idInput.getText();
+        final String password = passwordInput.getText();
 
         try {
             Auth.Login(id, password);
@@ -42,8 +43,11 @@ public class LoginController {
             currentStage.close();
         }
         catch (Exception err) {
-            stateLabel.setText("Could not sign in.");
-            System.err.println(err);
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Login error");
+            alert.setHeaderText("Could not login");
+            alert.setContentText("There was an error while signing in. Please try again later.");
+            alert.showAndWait();
         }
     }
     

@@ -5,6 +5,8 @@ import java.net.URL;
 import org.json.JSONObject;
 import com.lsb.Config;
 
+class DuplicateID extends Exception {}
+
 public class Auth {
     private static String authToken;
 
@@ -51,6 +53,13 @@ public class Auth {
         obj.put("id", id);
         obj.put("password", password);
         obj.put("name", name);
+
+        return obj;
+    }
+
+    static JSONObject createIDData(String id) {
+        JSONObject obj = new JSONObject();
+        obj.put("id", id);
 
         return obj;
     }
