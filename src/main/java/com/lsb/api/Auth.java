@@ -1,42 +1,47 @@
 package com.lsb.api;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.lsb.Config;
-
-class DuplicateID extends Exception {}
+import com.lsb.exception.DuplicateIDException;
 
 public class Auth {
     private static String authToken;
 
-    static Connector conn = new Connector();
+    static Connector conn = Connector.instance;
 
     public static String getAuthToken() {
         return authToken;
     }
 
-    public static void Login(String id, String password) {
+    public static void login(String id, String password) {
         try {
             URL url = new URL(Config.URL_LOGIN);
             JSONObject LoginData = createLoginData(id, password);
 
-            authToken = new JSONObject(conn.Request(url, LoginData)).getString("authToken");
+            authToken = new JSONObject(conn.request(url, LoginData)).getString("authToken");
         }
-        catch (MalformedURLException e) {
+        catch (IOException e) {
             System.err.println(e);
         }
     }
 
-    public static void Register(String id, String password, String name) {
+    public static void register(String id, String password, String name) throws DuplicateIDException {
         try {
             URL url = new URL(Config.URL_REGISTER);
             JSONObject RegisterData = createRegisterData(id, password, name);
-
-            authToken = new JSONObject(conn.Request(url, RegisterData)).getString("authToken");
+            String _token = new JSONObject(conn.request(url, RegisterData)).getString("authToken");
+            authToken = _token;
         }
-        catch (MalformedURLException e) {
+        catch (IOException e) {
             System.err.println(e);
+        }
+        catch (JSONException e) {
+            throw new DuplicateIDException();
         }
     }
 
@@ -52,7 +57,7 @@ public class Auth {
         JSONObject obj = new JSONObject();
         obj.put("id", id);
         obj.put("password", password);
-        obj.put("name", name);
+        obj.put("username", name);
 
         return obj;
     }

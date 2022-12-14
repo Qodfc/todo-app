@@ -29,12 +29,12 @@ public class LoginController {
     Button registerButton;
 
     @FXML
-    private void Login(ActionEvent e) throws IOException {
+    private void login(ActionEvent e) throws IOException {
         final String id = idInput.getText();
         final String password = passwordInput.getText();
 
         try {
-            Auth.Login(id, password);
+            Auth.login(id, password);
             Scene scene = new Scene(Loader.loadFXML("main"));
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -43,6 +43,7 @@ public class LoginController {
             currentStage.close();
         }
         catch (Exception err) {
+            System.err.println(err);
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Login error");
             alert.setHeaderText("Could not login");
@@ -52,7 +53,7 @@ public class LoginController {
     }
     
     @FXML
-    private void OpenRegisterWindow(ActionEvent e) throws IOException {
+    private void openRegisterWindow(ActionEvent e) throws IOException {
         Scene scene = new Scene(Loader.loadFXML("register"));
         Stage stage = new Stage();
         stage.setScene(scene);

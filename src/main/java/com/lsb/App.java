@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.lsb.localDB.Connector;
+import com.lsb.util.Net;
+
 /**
  * JavaFX App
  */
@@ -17,8 +20,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Font.loadFont(getClass().getResourceAsStream("/com/lsb/font.otf"), 10);
-        scene = new Scene(loadFXML("login"));
+        if (Net.isAvailable()) {
+            scene = new Scene(loadFXML("login"));
+        }
+        else {
+            scene = new Scene(loadFXML("main"));
+        }
+
         stage.setScene(scene);
         stage.show();
     }

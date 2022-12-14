@@ -2,6 +2,7 @@ package com.lsb.controller;
 
 import java.io.IOException;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -10,18 +11,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.event.ActionEvent;
 import netscape.javascript.JSObject;
 
-import com.lsb.api.Auth;
 import com.lsb.api.Memo;
+import com.lsb.util.Net;
 
 public class MainController{
     @FXML
-    Button btn;
+    TextField searchField;
 
     @FXML
     WebView webView;
@@ -29,11 +31,28 @@ public class MainController{
     private JSBridge jsBridge;
 
     @FXML
-    public void initialize() {
-        final WebEngine engine = webView.getEngine();
+    private void initialize() {
+        refresh();
+    }
 
-        System.out.println(Auth.getAuthToken());
-        Memo.Refresh();
+    @FXML
+    private void search(ActionEvent e) {
+        String keyword = searchField.getText();
+
+        if (keyword.isBlank() || keyword.isEmpty()) Memo.reset();
+        else Memo.search(keyword);
+
+        show();
+    }
+
+    public void refresh() {
+        Memo.refresh();
+        show();
+    }
+
+
+    private void show() {
+        final WebEngine engine = webView.getEngine();
 
         engine.setJavaScriptEnabled(true);
         engine.setUserStyleSheetLocation(getClass().getResource("/com/lsb/mainView.css").toString());
@@ -41,26 +60,42 @@ public class MainController{
             if (n != null) {
                 Document document = engine.getDocument();
                 Element board = document.getElementById("container");
-
-                jsBridge = new JSBridge();
                 
-                for (Object obj : Memo.Get()) {
+                while(board.getFirstChild() != null) {
+                    board.removeChild(board.getFirstChild());
+                }
+                
+                jsBridge = new JSBridge();
+
+
+                if (Net.isAvailable()) {
+                    Element newMemo = document.createElement("div");
+                    newMemo.setAttribute("class", "content-item new");
+                    newMemo.setTextContent("New memo...");
+                    board.appendChild(newMemo);
+                    newMemo.setAttribute("onclick", "app.click('')");
+                }
+                
+                
+                for (Object obj : Memo.get()) {
                     JSONObject body = (JSONObject) obj;
 
                     String title = body.getString("title");
                     String article = body.getString("article");
-                    String id = body.getString("_id");
+                    String color = body.getString("color");
+                    String _id = body.getString("_id");
 
                     Element content = document.createElement("div");
-                    content.setAttribute("id", id);
+                    content.setAttribute("id", _id);
                     content.setAttribute("class", "content-item");
+                    content.setAttribute("style", "background-color: " + color + ";");
 
                     Element contentTitle = document.createElement("div");
-                    contentTitle.setAttribute("id", id + "-title");
+                    contentTitle.setAttribute("id", _id + "-title");
                     contentTitle.setAttribute("class", "content-item-title");
 
                     Element contentArticle = document.createElement("div");
-                    contentArticle.setAttribute("id", id + "-article");
+                    contentArticle.setAttribute("id", _id + "-article");
                     contentArticle.setAttribute("class", "content-item-article");
 
                     Element hr = document.createElement("hr");
@@ -72,22 +107,18 @@ public class MainController{
                     board.appendChild(content);
                     
                     engine.executeScript(
-                        "document.getElementById('" + id + "-title')"
+                        "document.getElementById('" + _id + "-title')"
                         + ".innerHTML = '" + title + "';"
                         +
-                        "document.getElementById('" + id + "-article')"
+                        "document.getElementById('" + _id + "-article')"
                         + ".innerHTML = '" + article + "';"
                     );
 
-                    content.setAttribute("onclick", "app.click(this.querySelector('.content-item-title').innerText, this.querySelector('.content-item-article').innerHTML)");
+                    content.setAttribute("onclick", "app.click('" + _id + "')");
                 }
 
-                System.out.println("Ready");
                 JSObject window = (JSObject) engine.executeScript("window");
                 window.setMember("app", jsBridge);
-
-                //Firebug debugging
-                //engine.executeScript("var firebug=document.createElement('script');firebug.setAttribute('src','https://lupatec.eu/getfirebug/firebug-lite-compressed.js');document.body.appendChild(firebug);(function(){if(window.firebug.version){firebug.init();}else{setTimeout(arguments.callee);}})();void(firebug);");
             }
         });
         
@@ -97,21 +128,24 @@ public class MainController{
     }
 
     public class JSBridge {
-        public void click(String title, String article) throws IOException {
+        public void click(String _id) throws IOException {
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/lsb/editor.fxml"));     
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/lsb/editor.fxml")); 
 
                 Parent root = (Parent)fxmlLoader.load();          
                 EditorController controller = fxmlLoader.<EditorController>getController();
                 
-                controller.setTitle(title);
-                controller.setArticle(article);
+                controller.setMemo(_id);
 
                 Scene scene = new Scene(root); 
                 Stage stage = new Stage();
 
                 stage.setScene(scene);    
-                stage.show();  
+                stage.setOnHidden(e -> {
+                    controller.close();
+                    refresh();
+                });
+                stage.show();
             }
             catch (Exception e) {
                 System.err.println(e);
