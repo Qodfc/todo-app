@@ -1,7 +1,6 @@
 package com.lsb.api;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.JSONArray;
