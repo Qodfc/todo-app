@@ -132,7 +132,10 @@ public class EditorController {
 
     private void delete() {
         try {
+            if (!Net.isAvailable()) return;
+            
             Memo.delete(memo.getString("_id"));
+            com.lsb.localDB.Memo.delete(memo.getString("_id"));
         }
         catch (Exception e) {
             System.err.println(e);

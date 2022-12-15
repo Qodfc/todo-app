@@ -85,13 +85,12 @@ public class Memo {
 
         for (Object obj : memos) {
             JSONObject body = (JSONObject) obj;
-            String title = body.getString("title");
+            String title = body.getString("title").toUpperCase();
             String article = Jsoup.parse(body.getString("article")).text().toUpperCase();
 
             if (title.contains(keyword) || article.contains(keyword)) {
                 result.put(body);
             }
-
         }
 
         memos = result;

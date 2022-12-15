@@ -60,14 +60,32 @@ public class Memo {
 
             Connector.connect();
             String sql =
-                "INSERT INTO memos (_id, title, article, color, timestamp)" + 
-                "VALUES ('" + _id + "', '" + title + "', '" + article + "', '" + color + "', '" + timestamp + "')" +
-                "ON CONFLICT (_id)" + 
+                "INSERT INTO memos (_id, title, article, color, timestamp) " + 
+                "VALUES ('" + _id + "', '" + title + "', '" + article + "', '" + color + "', '" + timestamp + "') " +
+                "ON CONFLICT (_id) " + 
                 "DO UPDATE SET _id = '" + _id + "', title = '" + title + "', article = '" + article + "', color = '" + color + "', timestamp = '" + timestamp + "'";
 
             PreparedStatement st = Connector.connection.prepareStatement(sql);
             st.executeUpdate();
             
+        }
+        catch (SQLException e) {
+            System.err.println(e);
+        }
+        finally {
+            Connector.close();
+        }
+    }
+
+    public static void delete(String _id) {
+        try {
+            Connector.connect();
+            String sql = 
+                "DELETE FROM memos " + 
+                "WHERE _id = '" + _id + "';";
+
+            PreparedStatement st = Connector.connection.prepareStatement(sql);
+            st.executeUpdate();
         }
         catch (SQLException e) {
             System.err.println(e);
